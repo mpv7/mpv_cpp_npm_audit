@@ -6,39 +6,78 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Для Windows/MinGW
+if(WIN32)
+    add_compile_definitions(CURL_STATICLIB)
+    set(CMAKE_FIND_LIBRARY_PREFIXES "")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".lib")
+endif()
+
 # Output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Options
 option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DOCS "Build Doxygen documentation" OFF)
 
-# Find required packages
+
+# curl с Windows SSL (не требует OpenSSL)
+set(CURL_USE_WINDOWS_SSL ON)
 find_package(CURL REQUIRED)
+
+# nlohmann/json
 find_package(nlohmann_json CONFIG REQUIRED)
 
-# Add main executable
-add_executable(${PROJECT_NAME}
-        src/main.cpp
+# ============================================
+# СТАТИЧЕСКАЯ БИБЛИОТЕКА
+# ============================================
+add_library(${PROJECT_NAME}_lib STATIC
+        src/lib/CmakeParser.cpp
+        src/lib/VulnerabilityAnalyzer.cpp
+        src/lib/VersionComparator.cpp
+        src/lib/NvdClient.cpp
+        src/lib/HtmlReporter.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${PROJECT_NAME}_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}_lib
         ${CURL_LIBRARIES}
         nlohmann_json::nlohmann_json
 )
 
-# Tests
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}_lib
+            ws2_32 wldap32 crypt32 advapi32 normaliz
+    )
+endif()
+
+# ============================================
+# ИСПОЛНЯЕМЫЙ ФАЙЛ
+# ============================================
+add_executable(${PROJECT_NAME}
+        src/main.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}
+        ${PROJECT_NAME}_lib
+)
+
+# ============================================
+# ТЕСТЫ
+# ============================================
 if(BUILD_TESTS)
     include(CTest)
     add_subdirectory(tests)
 endif()
 
-# Documentation
+# ============================================
+# ДОКУМЕНТАЦИЯ
+# ============================================
 if(BUILD_DOCS)
     find_package(Doxygen REQUIRED)
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
