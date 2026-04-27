@@ -22,7 +22,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DOCS "Build Doxygen documentation" OFF)
 
-
 # curl с Windows SSL (не требует OpenSSL)
 set(CURL_USE_WINDOWS_SSL ON)
 find_package(CURL REQUIRED)
@@ -34,6 +33,8 @@ find_package(nlohmann_json CONFIG REQUIRED)
 # СТАТИЧЕСКАЯ БИБЛИОТЕКА
 # ============================================
 add_library(${PROJECT_NAME}_lib STATIC
+        src/lib/Library.cpp
+        src/lib/Utils.cpp
         src/lib/CmakeParser.cpp
         src/lib/VulnerabilityAnalyzer.cpp
         src/lib/VersionComparator.cpp

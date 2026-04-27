@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Заглушка" << std::endl;
+    std::cout << "hello mmm" << std::endl;
     return 0;
 }
