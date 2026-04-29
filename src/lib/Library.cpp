@@ -48,6 +48,6 @@ bool Library::isVulnerable() const noexcept {
 
 std::string Library::getSuggestedFixVersion() const {
     return "unknown";
-}
+} // ДОДЕЛАТЬ КОГДА РЕАЛИЗУЮ ОБРАЩЕНИЕ В NVD
 
 } // namespace audit

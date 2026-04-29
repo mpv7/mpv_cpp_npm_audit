@@ -22,38 +22,35 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DOCS "Build Doxygen documentation" OFF)
 
-# curl с Windows SSL (не требует OpenSSL)
-set(CURL_USE_WINDOWS_SSL ON)
+# Зависимости
 find_package(CURL REQUIRED)
-
-# nlohmann/json
 find_package(nlohmann_json CONFIG REQUIRED)
 
 # ============================================
 # СТАТИЧЕСКАЯ БИБЛИОТЕКА
 # ============================================
 add_library(${PROJECT_NAME}_lib STATIC
-        src/lib/Library.cpp
-        src/lib/Utils.cpp
-        src/lib/CmakeParser.cpp
-        src/lib/VulnerabilityAnalyzer.cpp
-        src/lib/VersionComparator.cpp
-        src/lib/NvdClient.cpp
-        src/lib/HtmlReporter.cpp
+    src/lib/Library.cpp
+    src/lib/Utils.cpp
+    src/lib/CmakeParser.cpp
+    src/lib/VulnerabilityAnalyzer.cpp
+    src/lib/VersionComparator.cpp
+    src/lib/NvdClient.cpp
+    src/lib/HtmlReporter.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(${PROJECT_NAME}_lib
-        ${CURL_LIBRARIES}
-        nlohmann_json::nlohmann_json
+    ${CURL_LIBRARIES}
+    nlohmann_json::nlohmann_json
 )
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME}_lib
-            ws2_32 wldap32 crypt32 advapi32 normaliz
+        ws2_32 wldap32 crypt32 advapi32 normaliz
     )
 endif()
 
@@ -61,18 +58,18 @@ endif()
 # ИСПОЛНЯЕМЫЙ ФАЙЛ
 # ============================================
 add_executable(${PROJECT_NAME}
-        src/main.cpp
+    src/main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
-        ${PROJECT_NAME}_lib
+    ${PROJECT_NAME}_lib
 )
 
 # ============================================
 # ТЕСТЫ
 # ============================================
 if(BUILD_TESTS)
-    include(CTest)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
@@ -85,8 +82,8 @@ if(BUILD_DOCS)
     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
     add_custom_target(docs
-            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            COMMENT "Generating API documentation"
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation"
     )
 endif()
