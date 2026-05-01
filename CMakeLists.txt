@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME}_lib STATIC
     src/lib/VersionComparator.cpp
     src/lib/NvdClient.cpp
     src/lib/HtmlReporter.cpp
+    src/lib/CpeMapper.cpp 
 )
 
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
