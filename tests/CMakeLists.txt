@@ -4,6 +4,7 @@ add_executable(tests
     test_library.cpp
     test_cmake_parser.cpp
     test_cpe_mapper.cpp
+    test_Vulnerability_Analyzer.cpp
 )
 
 # Подключаем заголовки проекта и doctest.h из корня

@@ -34,7 +34,6 @@ add_library(${PROJECT_NAME}_lib STATIC
     src/lib/Utils.cpp
     src/lib/CmakeParser.cpp
     src/lib/VulnerabilityAnalyzer.cpp
-    src/lib/VersionComparator.cpp
     src/lib/NvdClient.cpp
     src/lib/HtmlReporter.cpp
     src/lib/CpeMapper.cpp 

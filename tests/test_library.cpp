@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "audit/Libruary.h"
+#include "audit/Library.h"
 
 using namespace audit;
 

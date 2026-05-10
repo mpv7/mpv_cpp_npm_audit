@@ -1,6 +1,8 @@
 #include "audit/NvdClient.h"
 #include <curl/curl.h>
 #include <stdexcept>
+#include <nlohmann/json.hpp> 
+using json = nlohmann::json; 
 
 namespace audit {
 
@@ -29,7 +31,9 @@ std::string NvdClient::buildCpeQueryUrl(const std::string& cpe) const {
     CURL* curl = static_cast<CURL*>(curlHandle_);
     
     std::string url = "https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName=";
-    url += curl_easy_escape(NULL, cpe.c_str(), 0);
+    char* escaped = curl_easy_escape(curl, cpe.c_str(), 0); 
+    url += escaped;
+    curl_free(escaped);
     
     if (!apiKey_.empty()) {
         url += "&apiKey=" + apiKey_;
@@ -99,9 +103,7 @@ json NvdClient::fetchByCpe(const Library& library) {
     }
 }
 
-// ============================================
-// ПОИСК УЯЗВИМОСТЕЙ ПО КЛЮЧЕВОМУ СЛОВУ
-// ============================================
+
 json NvdClient::fetchByKeyword(const std::string& keyword) {
     // Строим URL и выполняем запрос
     std::string url = buildKeywordQueryUrl(keyword);
