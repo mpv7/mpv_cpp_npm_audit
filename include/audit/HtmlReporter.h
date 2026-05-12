@@ -1,8 +1,7 @@
 #pragma once
-
-#include "Library.h"
 #include <string>
 #include <vector>
+#include "audit/Library.h"
 
 namespace audit {
 
@@ -12,4 +11,4 @@ public:
     static void openInBrowser(const std::string& filePath);
 };
 
-}
+} // namespace audit
