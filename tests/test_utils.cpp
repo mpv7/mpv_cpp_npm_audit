@@ -1,8 +1,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "audit/Utils.h"
+#include <fstream>
+#include <filesystem>
 
-namespace audit{
+namespace audit {
     TEST_CASE("test trim"){
         CHECK(trim("  version is empty    ") == "version is empty");
         CHECK_FALSE(trim(" version is 12.2.1   ") == "version is 12.2.1   ");
@@ -14,6 +16,7 @@ namespace audit{
         CHECK(test[2] == "3");
         CHECK_FALSE(test.size() > 3);
     }
+
     TEST_CASE("test startsWith"){
         CHECK(startsWith("hello world", "hello"));
         CHECK(startsWith("hello", "he"));
@@ -47,5 +50,28 @@ namespace audit{
         CHECK_FALSE(isValidSemanticVersion("01.2.3"));
     }
 
-    /// НАПИСАТЬ ДЛЯ ДИРРЕКТОРИЙ И ПАПКИ ТЕСТЫ ПРИДЕТСЯ НАЙТИ ЧТО ТО ТИПО МОК ТЕСТОВ В ПИТОНЕ ИЛИ НА КОМПЕ СОЗДАВАТЬ
+    TEST_CASE("test fileExists and isDirectory") {
+        // Временный файл
+        auto tempFile = std::filesystem::temp_directory_path() / "test_file.txt";
+        std::ofstream ofs(tempFile);
+        ofs << "test";
+        ofs.close();
+
+        CHECK(fileExists(tempFile.string()));
+        CHECK_FALSE(isDirectory(tempFile.string()));
+
+        // Временная папка
+        auto tempDir = std::filesystem::temp_directory_path() / "test_dir";
+        std::filesystem::create_directory(tempDir);
+
+        CHECK(fileExists(tempDir.string()));
+        CHECK(isDirectory(tempDir.string()));
+
+        // Удаляем
+        std::filesystem::remove(tempFile);
+        std::filesystem::remove(tempDir);
+
+        CHECK_FALSE(fileExists(tempFile.string()));
+        CHECK_FALSE(fileExists(tempDir.string()));
+    }
 }
