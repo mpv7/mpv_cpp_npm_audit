@@ -15,7 +15,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Опции сборки
-option(BUILD_TESTS "Build unit tests" OFF)
+option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DOCS  "Build Doxygen documentation" OFF)
 
 # ============================================
@@ -34,9 +34,7 @@ add_library(${PROJECT_NAME}_lib STATIC
     src/lib/VulnerabilityAnalyzer.cpp
     src/lib/NvdClient.cpp
     src/lib/HtmlReporter.cpp
-    # ❗ CpeMapper.cpp удалён из сборки, т.к. переходим на keywordSearch
 )
-
 # Заголовочные файлы
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -68,11 +66,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 # ============================================
-# ТЕСТЫ (опционально)
+# ТЕСТЫ 
 # ============================================
 if(BUILD_TESTS)
     enable_testing()
-    # add_subdirectory(tests)
+    add_subdirectory(tests)  
 endif()
 
 # ============================================

@@ -1,31 +1,28 @@
-# Создаём тестовый исполняемый файл
+# Исполняемый файл для тестов
 add_executable(tests
-    #test_utils.cpp
-    #test_library.cpp
-    #test_cmake_parser.cpp
-    #test_cpe_mapper.cpp
-    #test_Vulnerability_Analyzer.cpp
+    test_utils.cpp
+    test_library.cpp
+    test_cmake_parser.cpp
+    test_Vulnerability_Analyzer.cpp
 )
 
-# Подключаем заголовки проекта и doctest.h из корня
+# Пути к заголовкам проекта и doctest.h
 target_include_directories(tests PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-# Линкуем со статической библиотекой
+# Линковка с библиотекой проекта
 target_link_libraries(tests
     ${PROJECT_NAME}_lib
 )
 
-# Для Windows (доп. библиотеки для curl)
+# Дополнительные библиотеки для Windows (curl и т.д.)
 if(WIN32)
     target_link_libraries(tests
         ws2_32 wldap32 crypt32 advapi32 normaliz
     )
 endif()
 
-# ============================================
-# РЕГИСТРИРУЕМ ТЕСТ В CTEST (ОБЯЗАТЕЛЬНО!)
-# ============================================
+# Регистрация теста для CTest
 add_test(NAME cpp-audit-tests COMMAND tests)

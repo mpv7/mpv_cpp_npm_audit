@@ -16,4 +16,4 @@ void Library::setStatus(AuditStatus status) { status_ = status; }
 void Library::setSuggestedFixVersion(const std::string& version) { suggestedFixVersion_ = version; }
 bool Library::isVulnerable() const noexcept { return status_ == AuditStatus::Outdated; }
 
-} // namespace audit
+} 
