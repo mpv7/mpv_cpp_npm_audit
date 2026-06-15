@@ -27,11 +27,11 @@ int main(int argc, char* argv[]) {
             std::cerr << "Error: Valid project path required.\n"; printUsage(argv[0]); return 1;
         }
 
-        std::cout << "🔍 Scanning: " << projectPath << "\n";
+        std::cout << "Scanning: " << projectPath << "\n";
         audit::CmakeParser parser(projectPath);
         auto libs = parser.parseFetchContent();
-        if (libs.empty()) { std::cout << "⚠️  No FetchContent deps found.\n"; return 0; }
-        std::cout << "📦 Found " << libs.size() << " libraries.\n";
+        if (libs.empty()) { std::cout << "No FetchContent deps found.\n"; return 0; }
+        std::cout << "Found " << libs.size() << " libraries.\n";
 
         audit::NvdClient nvd(apiKey, 30);
         for (size_t i = 0; i < libs.size(); ++i) {
@@ -42,10 +42,10 @@ int main(int argc, char* argv[]) {
                 auto resp = nvd.fetchVulnerabilities(lib.getName());
                 audit::VulnerabilityAnalyzer::analyze(lib, resp);
                 if (lib.isVulnerable()) {
-                    std::cout << "⚠️  VULNERABLE → fix: " << lib.getSuggestedFixVersion() << "\n";
-                } else { std::cout << "✅ OK\n"; }
+                    std::cout << "VULNERABLE -> fix: " << lib.getSuggestedFixVersion() << "\n";
+                } else { std::cout << "OK\n"; }
             } catch (const std::exception& e) {
-                std::cout << "❌ Error: " << e.what() << "\n";
+                std::cout << "Error: " << e.what() << "\n";
                 lib.setStatus(audit::AuditStatus::Error);
             }
             if (i + 1 < libs.size()) std::this_thread::sleep_for(std::chrono::seconds(apiKey.empty() ? 7 : 1));
@@ -53,12 +53,12 @@ int main(int argc, char* argv[]) {
 
         std::string report = "audit_report.html";
         audit::HtmlReporter::generate(libs, report);
-        std::cout << "📄 Report: " << report << "\n";
+        std::cout << "Report: " << report << "\n";
         audit::HtmlReporter::openInBrowser(report);
 
         int v=0, s=0, e=0;
         for (auto& l : libs) { if(l.isVulnerable()) v++; else if(l.getStatus()==audit::AuditStatus::Error) e++; else s++; }
-        std::cout << "\n╔══════════════════╗\n║ 🟢 Safe: " << s << "\n║ 🔴 Vuln: " << v << "\n║ ❌ Errors: " << e << "\n╚══════════════════╝\n";
+        std::cout << "\n----------\nSafe: " << s << "\nVuln: " << v << "\nErrors: " << e << "\n----------\n";
         return (v || e) ? 1 : 0;
     } catch (const std::exception& e) {
         std::cerr << "Fatal: " << e.what() << "\n"; return 2;

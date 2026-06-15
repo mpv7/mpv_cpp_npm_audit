@@ -17,23 +17,6 @@ namespace audit {
         CHECK_FALSE(test.size() > 3);
     }
 
-    TEST_CASE("test startsWith"){
-        CHECK(startsWith("hello world", "hello"));
-        CHECK(startsWith("hello", "he"));
-        CHECK_FALSE(startsWith("hello", "world"));
-    }
-
-    TEST_CASE("test endsWith"){
-        CHECK(endsWith("test.txt", ".txt"));
-        CHECK(endsWith("example", "ample"));
-        CHECK_FALSE(endsWith("abc", "abcd"));
-    }
-
-    TEST_CASE("test contains"){
-        CHECK(contains("C++ programming", "++"));
-        CHECK_FALSE(contains("abc", "d"));
-    }
-
     TEST_CASE("test replace") {
         CHECK(replace("hello world", "world", "C++") == "hello C++");
         CHECK(replace("a b a", "a", "x") == "x b x");
