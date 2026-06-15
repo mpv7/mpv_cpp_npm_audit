@@ -2,7 +2,6 @@
 build/
 build-*/
 cmake-build-*/
-
 # IDE
 .vscode/
 .idea/

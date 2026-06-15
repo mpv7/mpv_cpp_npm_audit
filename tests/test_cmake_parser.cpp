@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 // Создаём временный CMakeLists.txt для тестов
 static fs::path createTempCmake(const std::string& content) {
-    fs::path tempDir = fs::temp_directory_path() / "cmake_test"; // C:\Users\Михаил\AppData\Local\Temp\cmake_test
+    fs::path tempDir = fs::temp_directory_path() / "cmake_test";// C:\Users\Михаил\AppData\Local\Temp\cmake_test
     fs::create_directories(tempDir);
     fs::path cmakeFile = tempDir / "CMakeLists.txt";
     std::ofstream file(cmakeFile);

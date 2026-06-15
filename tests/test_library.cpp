@@ -1,15 +1,13 @@
 #include "doctest.h"
-#include "audit/Libruary.h"
+#include "audit/Library.h"
 
 using namespace audit;
 
 TEST_CASE("test getters"){
     Library lib("fmt", "10.1.0");
-    lib.setCpe("cpe:2.3:a:fmt:fmt");
 
     CHECK(lib.getName()=="fmt");
     CHECK(lib.getVersion()=="10.1.0");
-    CHECK(lib.getCpe()=="cpe:2.3:a:fmt:fmt");
     CHECK(lib.getVulnerabilities().empty());
     CHECK(lib.getStatus() == AuditStatus::Ok);
 
@@ -33,8 +31,4 @@ TEST_CASE("test Vulnerability"){
 
     lib.setStatus(AuditStatus::Ok);
     CHECK_FALSE(lib.isVulnerable());
-
-
-
 }
-
