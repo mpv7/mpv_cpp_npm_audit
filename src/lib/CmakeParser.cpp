@@ -28,9 +28,9 @@ std::vector<Library> CmakeParser::parseFetchContent() {
   std::regex pattern(R"(FetchContent_Declare\s*\(\s*(\w+)[^)]*?GIT_TAG\s+["']?([^"'\s\)]+)["']?)", std::regex::icase);
 
   for (std::sregex_iterator it(content.begin(), content.end(), pattern), end; it != end; ++it) {
-    if (it->size() >= 3) {
-      std::string name = (*it)[1].str();
-      std::string rawTag = replace(replace((*it)[2].str(), "\"", ""), "'", "");
+    if (it->size() >= 3) { 
+      std::string name = (*it)[1].str(); 
+      std::string rawTag = replace(replace((*it)[2].str(), "\"", ""), "'", ""); 
       std::string version = extractVersionFromTag(rawTag);
       if (!version.empty()) {
         libraries.emplace_back(name, version);
@@ -46,8 +46,8 @@ std::string CmakeParser::extractVersionFromTag(const std::string& tag) {
     cleaned = cleaned.substr(1);
   }
   size_t dash = cleaned.find('-');
-  if (dash != std::string::npos) cleaned = cleaned.substr(0, dash);
-  return isValidSemanticVersion(cleaned) ? cleaned : "";
+  if (dash != std::string::npos) cleaned = cleaned.substr(0, dash); //v1.2.3-alpha.1"; -> 1.2.3 dash = 6 
+  return isValidSemanticVersion(cleaned) ? cleaned : ""; 
 }
 
 }  // namespace audit

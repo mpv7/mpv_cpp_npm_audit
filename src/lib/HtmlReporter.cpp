@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <ctime>
-#include <filesystem>  // <-- Важно для абсолютных путей
+#include <filesystem>  
 #include <fstream>
 #include <iostream>
 
@@ -192,13 +192,11 @@ void HtmlReporter::generate(const std::vector<Library>& libraries, const std::st
 
 void HtmlReporter::openInBrowser(const std::string& filePath) {
   try {
-    // Получаем полный абсолютный путь, чтобы избежать ошибок с относительными путями
     std::string absolutePath = std::filesystem::absolute(filePath).string();
     std::string cmd;
 
 #ifdef _WIN32
-    // В Windows команда 'start' требует заголовок в кавычках, если путь тоже в кавычках
-    // Синтаксис: start "Заголовок" "Путь_к_файлу"
+
     cmd = std::string(OPEN_CMD) + " \"\" \"" + absolutePath + "\"";
 #elif __APPLE__
     cmd = std::string(OPEN_CMD) + " \"" + absolutePath + "\"";
