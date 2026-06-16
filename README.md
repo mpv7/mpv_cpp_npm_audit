@@ -153,6 +153,8 @@ spdlog         1.9.2       CVE-XXXX-XXXX   MEDIUM
 
 Отчёт автоматически открывается в браузере после завершения анализа.
 
+<img width="1885" height="877" alt="image" src="https://github.com/user-attachments/assets/b16ffe7e-f1c8-4c4a-90c7-f79308a8a566" />
+
 ---
 
 ## 🧪 Тестирование
