@@ -23,10 +23,10 @@ std::vector<std::string> split(const std::string& str, char delimiter);
 std::string replace(const std::string& str, const std::string& from, const std::string& to);
 
 /// @brief Проверяет, соответствует ли строка формату семантической версии.
-/// 
+///
 /// Допустимые форматы: "5", "1.2", "10.20.30".
 /// Запрещены: ведущие нули ("01.2"), буквенные суффиксы ("1.2-alpha"), префикс 'v'.
-/// 
+///
 /// @param version Строка для проверки.
 /// @return true, если формат корректен; false в противном случае.
 bool isValidSemanticVersion(const std::string& version);
@@ -41,4 +41,4 @@ bool fileExists(const std::string& path);
 /// @return true, если путь ведёт к существующей директории; false в противном случае.
 bool isDirectory(const std::string& path);
 
-} // namespace audit
+}  // namespace audit

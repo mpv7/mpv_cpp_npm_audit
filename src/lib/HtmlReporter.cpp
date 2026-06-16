@@ -1,30 +1,31 @@
 #include "audit/HtmlReporter.h"
-#include <fstream>
+
 #include <cstdlib>
 #include <ctime>
 #include <filesystem>  // <-- Важно для абсолютных путей
+#include <fstream>
 #include <iostream>
 
 #ifdef _WIN32
-    #define OPEN_CMD "start"
+#define OPEN_CMD "start"
 #elif __APPLE__
-    #define OPEN_CMD "open"
+#define OPEN_CMD "open"
 #else
-    #define OPEN_CMD "xdg-open"
+#define OPEN_CMD "xdg-open"
 #endif
 
 namespace audit {
 
 void HtmlReporter::generate(const std::vector<Library>& libraries, const std::string& outputPath) {
-    std::ofstream file(outputPath);
-    
-    // Получаем текущее время правильно
-    std::time_t now = std::time(nullptr);
-    std::tm* tm_info = std::localtime(&now);
-    char time_buffer[64];
-    std::strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", tm_info);
-    
-    file << R"(<!DOCTYPE html>
+  std::ofstream file(outputPath);
+
+  // Получаем текущее время правильно
+  std::time_t now = std::time(nullptr);
+  std::tm* tm_info = std::localtime(&now);
+  char time_buffer[64];
+  std::strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", tm_info);
+
+  file << R"(<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,43 +59,57 @@ void HtmlReporter::generate(const std::vector<Library>& libraries, const std::st
 </head>
 <body>
     <h1>🔍 C++ Dependencies Audit Report</h1>
-    <p class="meta">Generated: )" << time_buffer << R"(</p>
+    <p class="meta">Generated: )"
+       << time_buffer << R"(</p>
     
     <div class="summary">
         <h2>📊 Summary</h2>)";
 
-    // Подсчитываем статистику
-    int total = libraries.size();
-    int safe = 0, vulnerable = 0, notfound = 0, errors = 0;
-    
-    for (const auto& lib : libraries) {
-        switch (lib.getStatus()) {
-            case AuditStatus::Ok: safe++; break;
-            case AuditStatus::Outdated: vulnerable++; break;
-            case AuditStatus::NotFound: notfound++; break;
-            case AuditStatus::Error: errors++; break;
-        }
+  // Подсчитываем статистику
+  int total = libraries.size();
+  int safe = 0, vulnerable = 0, notfound = 0, errors = 0;
+
+  for (const auto& lib : libraries) {
+    switch (lib.getStatus()) {
+      case AuditStatus::Ok:
+        safe++;
+        break;
+      case AuditStatus::Outdated:
+        vulnerable++;
+        break;
+      case AuditStatus::NotFound:
+        notfound++;
+        break;
+      case AuditStatus::Error:
+        errors++;
+        break;
     }
-    
-    file << R"(
+  }
+
+  file << R"(
         <div class="stat">
-            <div class="stat-value">)" << total << R"(</div>
+            <div class="stat-value">)"
+       << total << R"(</div>
             <div class="stat-label">Total</div>
         </div>
         <div class="stat" style="background: #d1e7dd;">
-            <div class="stat-value" style="color: #198754;">)" << safe << R"(</div>
+            <div class="stat-value" style="color: #198754;">)"
+       << safe << R"(</div>
             <div class="stat-label">Safe</div>
         </div>
         <div class="stat" style="background: #f8d7da;">
-            <div class="stat-value" style="color: #dc3545;">)" << vulnerable << R"(</div>
+            <div class="stat-value" style="color: #dc3545;">)"
+       << vulnerable << R"(</div>
             <div class="stat-label">Vulnerable</div>
         </div>
         <div class="stat" style="background: #fff3cd;">
-            <div class="stat-value" style="color: #856404;">)" << notfound << R"(</div>
+            <div class="stat-value" style="color: #856404;">)"
+       << notfound << R"(</div>
             <div class="stat-label">Not in NVD</div>
         </div>
         <div class="stat" style="background: #e2e3e5;">
-            <div class="stat-value" style="color: #495057;">)" << errors << R"(</div>
+            <div class="stat-value" style="color: #495057;">)"
+       << errors << R"(</div>
             <div class="stat-label">Errors</div>
         </div>
     </div>
@@ -111,39 +126,57 @@ void HtmlReporter::generate(const std::vector<Library>& libraries, const std::st
         </thead>
         <tbody>)";
 
-    for (const auto& lib : libraries) {
-        std::string rowClass, badgeClass, statusText;
-        
-        switch (lib.getStatus()) {
-            case AuditStatus::Ok: rowClass="ok"; badgeClass="badge-ok"; statusText="✅ OK"; break;
-            case AuditStatus::Outdated: rowClass="outdated"; badgeClass="badge-out"; statusText="⚠️ VULNERABLE"; break;
-            case AuditStatus::NotFound: rowClass="notfound"; badgeClass="badge-not"; statusText="❓ Not Found"; break;
-            case AuditStatus::Error: rowClass="error"; badgeClass="badge-err"; statusText="❌ Error"; break;
-        }
-        
-        file << "<tr class=\"" << rowClass << "\">";
-        file << "<td><strong>" << lib.getName() << "</strong></td>";
-        file << "<td>" << lib.getVersion() << "</td>";
-        file << "<td><span class=\"badge " << badgeClass << "\">" << statusText << "</span></td>";
-        file << "<td>";
-        
-        if (lib.getVulnerabilities().empty()) {
-            file << "No known vulnerabilities";
-        } else {
-            file << "<ul class=\"vuln-list\">";
-            for (const auto& v : lib.getVulnerabilities()) {
-                file << "<li><strong>" << v.id << "</strong> (CVSS: " << v.cvssScore << ") " << v.description << "</li>";
-            }
-            file << "</ul>";
-        }
-        
-        file << "</td><td>";
-        if (lib.isVulnerable()) file << "➜ Update to <b>" << lib.getSuggestedFixVersion() << "</b>";
-        else file << "—";
-        file << "</td></tr>";
+  for (const auto& lib : libraries) {
+    std::string rowClass, badgeClass, statusText;
+
+    switch (lib.getStatus()) {
+      case AuditStatus::Ok:
+        rowClass = "ok";
+        badgeClass = "badge-ok";
+        statusText = "✅ OK";
+        break;
+      case AuditStatus::Outdated:
+        rowClass = "outdated";
+        badgeClass = "badge-out";
+        statusText = "⚠️ VULNERABLE";
+        break;
+      case AuditStatus::NotFound:
+        rowClass = "notfound";
+        badgeClass = "badge-not";
+        statusText = "❓ Not Found";
+        break;
+      case AuditStatus::Error:
+        rowClass = "error";
+        badgeClass = "badge-err";
+        statusText = "❌ Error";
+        break;
     }
-    
-    file << R"(
+
+    file << "<tr class=\"" << rowClass << "\">";
+    file << "<td><strong>" << lib.getName() << "</strong></td>";
+    file << "<td>" << lib.getVersion() << "</td>";
+    file << "<td><span class=\"badge " << badgeClass << "\">" << statusText << "</span></td>";
+    file << "<td>";
+
+    if (lib.getVulnerabilities().empty()) {
+      file << "No known vulnerabilities";
+    } else {
+      file << "<ul class=\"vuln-list\">";
+      for (const auto& v : lib.getVulnerabilities()) {
+        file << "<li><strong>" << v.id << "</strong> (CVSS: " << v.cvssScore << ") " << v.description << "</li>";
+      }
+      file << "</ul>";
+    }
+
+    file << "</td><td>";
+    if (lib.isVulnerable())
+      file << "➜ Update to <b>" << lib.getSuggestedFixVersion() << "</b>";
+    else
+      file << "—";
+    file << "</td></tr>";
+  }
+
+  file << R"(
         </tbody>
     </table>
     
@@ -152,31 +185,31 @@ void HtmlReporter::generate(const std::vector<Library>& libraries, const std::st
     </p>
 </body>
 </html>)";
-    
-    file.close();
-    std::cout << "   Report saved successfully." << std::endl;
+
+  file.close();
+  std::cout << "   Report saved successfully." << std::endl;
 }
 
 void HtmlReporter::openInBrowser(const std::string& filePath) {
-    try {
-        // Получаем полный абсолютный путь, чтобы избежать ошибок с относительными путями
-        std::string absolutePath = std::filesystem::absolute(filePath).string();
-        std::string cmd;
+  try {
+    // Получаем полный абсолютный путь, чтобы избежать ошибок с относительными путями
+    std::string absolutePath = std::filesystem::absolute(filePath).string();
+    std::string cmd;
 
 #ifdef _WIN32
-        // В Windows команда 'start' требует заголовок в кавычках, если путь тоже в кавычках
-        // Синтаксис: start "Заголовок" "Путь_к_файлу"
-        cmd = std::string(OPEN_CMD) + " \"\" \"" + absolutePath + "\"";
+    // В Windows команда 'start' требует заголовок в кавычках, если путь тоже в кавычках
+    // Синтаксис: start "Заголовок" "Путь_к_файлу"
+    cmd = std::string(OPEN_CMD) + " \"\" \"" + absolutePath + "\"";
 #elif __APPLE__
-        cmd = std::string(OPEN_CMD) + " \"" + absolutePath + "\"";
+    cmd = std::string(OPEN_CMD) + " \"" + absolutePath + "\"";
 #else
-        cmd = std::string(OPEN_CMD) + " \"" + absolutePath + "\"";
+    cmd = std::string(OPEN_CMD) + " \"" + absolutePath + "\"";
 #endif
 
-        std::system(cmd.c_str());
-    } catch (const std::exception& e) {
-        std::cerr << "   [Warning] Could not open browser: " << e.what() << std::endl;
-    }
+    std::system(cmd.c_str());
+  } catch (const std::exception& e) {
+    std::cerr << "   [Warning] Could not open browser: " << e.what() << std::endl;
+  }
 }
 
-} // namespace audit
+}  // namespace audit

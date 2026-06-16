@@ -2,8 +2,7 @@
 
 namespace audit {
 
-Library::Library(const std::string& name, const std::string& version) 
-    : name_(name), version_(version) {}
+Library::Library(const std::string& name, const std::string& version) : name_(name), version_(version) {}
 
 const std::string& Library::getName() const noexcept { return name_; }
 const std::string& Library::getVersion() const noexcept { return version_; }
@@ -16,4 +15,4 @@ void Library::setStatus(AuditStatus status) { status_ = status; }
 void Library::setSuggestedFixVersion(const std::string& version) { suggestedFixVersion_ = version; }
 bool Library::isVulnerable() const noexcept { return status_ == AuditStatus::Outdated; }
 
-} 
+}  // namespace audit
