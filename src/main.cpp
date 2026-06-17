@@ -56,7 +56,12 @@ int main(int argc, char* argv[]) {
         audit::VulnerabilityAnalyzer::analyze(lib, resp);
         if (lib.isVulnerable()) {
           std::cout << "VULNERABLE -> fix: " << lib.getSuggestedFixVersion() << "\n";
-        } else {
+        
+        } else if (lib.getStatus() == audit::AuditStatus::NotFound) {
+          std::cout << "Not found in NVD\n";
+        } else if (lib.getStatus() == audit::AuditStatus::Error) {
+          std::cout << "Error analyzing\n";
+        }else {
           std::cout << "OK\n";
         }
       } catch (const std::exception& e) {
