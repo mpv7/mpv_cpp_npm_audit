@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Error: " << e.what() << "\n";
         lib.setStatus(audit::AuditStatus::Error);
       }
-      if (i + 1 < libs.size()) std::this_thread::sleep_for(std::chrono::seconds(apiKey.empty() ? 7 : 1));
+      if (i + 1 < libs.size()) std::this_thread::sleep_for(std::chrono::seconds(apiKey.empty() ? 7 : 1)); //Приостанавливает текущий поток 
     }
 
     std::string report = "audit_report.html";
@@ -76,17 +76,19 @@ int main(int argc, char* argv[]) {
     std::cout << "Report: " << report << "\n";
     audit::HtmlReporter::openInBrowser(report);
 
-    int v = 0, s = 0, e = 0;
+    int v = 0, s = 0, e = 0, n=0;
     for (auto& l : libs) {
       if (l.isVulnerable())
         v++;
       else if (l.getStatus() == audit::AuditStatus::Error)
         e++;
+      else if (l.getStatus() == audit::AuditStatus::NotFound)
+        n++;
       else
         s++;
     }
-    std::cout << "\n----------\nSafe: " << s << "\nVuln: " << v << "\nErrors: " << e << "\n----------\n";
-    return (v || e) ? 1 : 0;
+    std::cout << "\n----------\nSafe: " << s << "\nVuln: " << v << "\nErrors: " << e << "\nNotFound: " << n << "\n----------\n";
+    return (v || e || n) ? 1 : 0;
   } catch (const std::exception& e) {
     std::cerr << "Fatal: " << e.what() << "\n";
     return 2;
